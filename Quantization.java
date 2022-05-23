@@ -16,6 +16,25 @@ public class Quantization {
 			{99,99,99,99,99,99,99,99},
 			{99,99,99,99,99,99,99,99},
 			{99,99,99,99,99,99,99,99}};
+	public int[][] quantizeLuma(int[][] input) {
+		int[][] quantizedArray = new int[input.length][input[0].length];
+		for(int i = 0; i < input.length; i++) {
+			for(int j = 0; j < input[0].length; j++) {
+				quantizedArray[i][j] = input[i][j] / quant_table_luma[i % 8][j % 8];
+			}
+		}
 
+		return quantizedArray;
+	}
 
+	public int[][] quantizeChroma(int[][] input) {
+		int[][] quantizedArray = new int[input.length][input[0].length];
+		for(int i = 0; i < input.length; i++) {
+			for(int j = 0; j < input[0].length; j++) {
+				quantizedArray[i][j] = input[i][j] / quant_table_chroma[i % 8][j % 8];
+			}
+		}
+
+		return quantizedArray;
+	}
 }
