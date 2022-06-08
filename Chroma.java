@@ -1,5 +1,5 @@
 public class Chroma {
-    // input from Image Reader somehow
+    // input from Image Reader
     // will run with both cb and cr tables
     public void subSample(int[][] table){
         for (int i = 0; i < table.length; i+=2){
