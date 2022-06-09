@@ -2,8 +2,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class Image {
+	ArrayList<ArrayList<Block>> blockArrayList = new ArrayList<>();
+
 	public static void main(String[] args) throws IOException {
 		int[][] image = {{123, 45, 23, 0, 5, 12, 85, 3}, {45, 12, 134, 76, 23, 12, 54, 12}, {43, 12, 65, 87, 12, 12, 14, 8},
 		{12, 76, 45, 12, 12, 54, 75, 12}, {23, 12, 12, 76, 34, 23, 34, 12}, {4, 23, 7, 87, 12, 23, 10, 13},

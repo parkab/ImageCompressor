@@ -15,6 +15,5 @@ public class Decompress {
 			s += inputStream.readBits(1);
 		}
 
-		HuffMan.decode(s);
 	}
 }
