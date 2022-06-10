@@ -1,11 +1,11 @@
-public class Block {
+public class BlockY {
 	public int[][] block;
 
-	public Block(int[][] block) {
+	public BlockY(int[][] block) {
 		this.block = block;
 	}
 
-	public Block(String block) {
+	public BlockY(String block) {
 		int[] arr = RLE.unRLE(block);
 		int[][] zigZag = ZigZag.unZigZag(arr);
 		int[][] quantized = Quantization.decodeQuantizeLuma(zigZag);
@@ -14,7 +14,7 @@ public class Block {
 		this.block = dct.inverseDCT(quantized);
 	}
 
-	public void compressBlock(String filepath) {
+	public String compressBlock() {
 		Chroma chroma = new Chroma();
 		chroma.subSample(block);
 		DCT dct = new DCT();
@@ -23,20 +23,18 @@ public class Block {
 		arr = Quantization.quantizeLuma(arr);
 		int[] zigzag = ZigZag.zigZagMatrix(arr, 8, 8);
 		String bits = RLE.rleArr(zigzag);
-
-		System.out.println(bits);
-
-		String answer  = HuffMan.encode(bits);
-		BitOutputStream outputStream = new BitOutputStream(filepath);
-
-		for(int i = 0; i < answer.length(); i++) {
-			outputStream.writeBits(1, Integer.valueOf(answer.charAt(i)));
-		}
-
-		outputStream.close();
+		return bits;
 	}
 
-	public static void main(String[] args) {
+	public String toString() {
+		String s = "";
+		for(int i = 0; i < block.length; i++) {
+			for(int j = 0; j < block[0].length; j++) {
+				s += block[i][j] + " ";
+			}
+			s += "\n";
+		}
 
+		return s;
 	}
 }

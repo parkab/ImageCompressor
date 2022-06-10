@@ -1,48 +1,89 @@
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class Image {
-	ArrayList<ArrayList<Block>> blockArrayList = new ArrayList<>();
+	public ArrayList<ArrayList<BlockY>> blockYArrayList = new ArrayList<>();
+	public ArrayList<ArrayList<BlockCr>> blockCrArrayList = new ArrayList<>();
+	public ArrayList<ArrayList<BlockCb>> blockCbArrayList = new ArrayList<>();
+	int height;
+	int width;
+	int[][] y;
+	int[][] cb;
+	int[][] cr;
 
-	public static void main(String[] args) throws IOException {
-		int[][] image = {{123, 45, 23, 0, 5, 12, 85, 3}, {45, 12, 134, 76, 23, 12, 54, 12}, {43, 12, 65, 87, 12, 12, 14, 8},
-		{12, 76, 45, 12, 12, 54, 75, 12}, {23, 12, 12, 76, 34, 23, 34, 12}, {4, 23, 7, 87, 12, 23, 10, 13},
-				{23, 12, 12, 76, 34, 23, 34, 12}, {4, 23, 7, 87, 12, 23, 10, 13}};
+	public Image(ProcessImage processImage) {
+		y = processImage.getY_array();
+		cb = processImage.getCb_array();
+		cr = processImage.getCr_array();
+		generateBlocks();
+	}
 
-		Chroma chroma = new Chroma();
-		chroma.subSample(image);
+	private void generateBlocks() {
+		for(int i = 0; i < y.length/8; i++) {
+			ArrayList<BlockY> blockYArrayList1 = new ArrayList<>();
+			ArrayList<BlockCb> blockCbArrayList1 = new ArrayList<>();
+			ArrayList<BlockCr> blockCrArrayList1 = new ArrayList<>();
+			for(int j = 0; j < y[0].length/8; j++) {
+				int[][] block_arr_y = new int[8][8];
+				int[][] block_arr_cb = new int[8][8];
+				int[][] block_arr_cr = new int[8][8];
+				for(int k = 0; k < 8; k++) {
+					for(int l = 0; l < 8; l++) {
+						block_arr_y[k][l] = y[(8*i)+k][(8*j)+l];
+						block_arr_cb[k][l] = cb[(8*i)+k][(8*j)+l];
+						block_arr_cr[k][l] = cr[(8*i)+k][(8*j)+l];
+					}
+				}
+				blockYArrayList1.add(new BlockY(block_arr_y));
+				blockCrArrayList1.add(new BlockCr(block_arr_cr));
+				blockCbArrayList1.add(new BlockCb(block_arr_cb));
+			}
+			blockYArrayList.add(blockYArrayList1);
+			blockCrArrayList.add(blockCrArrayList1);
+			blockCbArrayList.add(blockCbArrayList1);
+		}
+	}
 
-		DCT dct = new DCT();
-		image = dct.forwardDCT(image);
+	public void compressImage(String filepath) {
+		String y = "";
+		for(int i = 0; i < blockYArrayList.size(); i++) {
+			for(int j = 0; j < blockYArrayList.get(i).size(); j++) {
+				y += blockYArrayList.get(i).get(j).compressBlock() + "_";
+			}
+			y += "|";
+		}
+		String cb = "";
+		for(int i = 0; i < blockCbArrayList.size(); i++) {
+			for(int j = 0; j < blockCbArrayList.get(i).size(); j++) {
+				cb += blockCbArrayList.get(i).get(j).compressBlock() + "_";
+			}
+			cb += "|";
+		}
+		String cr = "";
+		for(int i = 0; i < blockCrArrayList.size(); i++) {
+			for(int j = 0; j < blockCrArrayList.get(i).size(); j++) {
+				cr += blockCrArrayList.get(i).get(j).compressBlock() + "_";
+			}
+			cr += "|";
+		}
 
-		Quantization quantization = new Quantization();
-		int[][] quantized = quantization.quantizeLuma(image);
+		String answer = HuffMan.encode(y + ")" + cb + ")" + cr + ")");
 
-		ZigZag zigzag = new ZigZag();
-
-		int[] zigzaged = zigzag.zigZagMatrix(quantized, 8, 8);
-
-		Helpers.loop1D(zigzaged);
-
-		String bits = RLE.rleArr(zigzaged);
-
-		String answer  = HuffMan.encode(bits);
-
-		BitOutputStream outputStream = new BitOutputStream("file.compressed");
-//
-//		for(int i = 0; i < 11; i++) {
-//			outputStream.writeBits(1, 0);
-//		}
-
-		System.out.println(answer);
+		BitOutputStream outputStream = new BitOutputStream(filepath);
 
 		for(int i = 0; i < answer.length(); i++) {
 			outputStream.writeBits(1, Integer.valueOf(answer.charAt(i)));
 		}
 
 		outputStream.close();
+	}
+
+	public static void main(String[] args) throws IOException {
+		BufferedImage bi = ImageIO.read(new File("Image_created_with_a_mobile_phone.png"));
+		Image image = new Image(new ProcessImage(bi));
+		image.compressImage("file.compressed");
 	}
 }

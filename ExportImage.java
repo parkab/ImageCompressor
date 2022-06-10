@@ -20,16 +20,21 @@ public class ExportImage {
 		ImageIO.write(img, "PNG", f);
 	}
 
-	public static void exportImage(String filepath, BufferedImage bi) {
-		try {
-			File output = new File(filepath);
-			ImageIO.write(bi, "png",output);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public static void test_fun(double[][] red_arr, double[][] blue_arr, double[][] green_arr) throws IOException {
+		BufferedImage img = new BufferedImage(red_arr[0].length, red_arr.length, BufferedImage.TYPE_INT_RGB);
+		File test = new File("test.png");
+		for(int i = 0; i < red_arr.length; i++) {
+			for(int j = 0; j < red_arr[0].length; j++) {
+				int col = ((int) red_arr[i][j] << 16) | ((int) green_arr[i][j] << 8) | (int) blue_arr[i][j];
+				img.setRGB(j, i, col);
+			}
 		}
+
+		ImageIO.write(img, "PNG", test);
 	}
 
 	public static void main(String[] args) throws IOException {
-		createImage();
+		BufferedImage bufferedImage = ImageIO.read(new File("Image_created_with_a_mobile_phone.png"));
+		ProcessImage processImage = new ProcessImage(bufferedImage);
 	}
 }
