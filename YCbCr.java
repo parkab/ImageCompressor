@@ -15,4 +15,21 @@ public class YCbCr {
 
 		return answer;
 	}
+
+	public static int[] YCbCrtoRGB(int y, int cb, int cr) {
+		double Y = (double) y;
+		double Cb = (double) cb;
+		double Cr = (double) cr;
+
+		int r = (int)(y + 0.000 * cb + 1.403 * cr);
+		int g = (int)(y - 0.344 * cb - 0.714 * cr);
+		int b = (int)(y + 1.773 * cb + 0.000 * cr);
+
+		int[] answer = new int[3];
+		answer[0] = r;
+		answer[1] = g;
+		answer[2] = b;
+
+		return answer;
+	}
 }

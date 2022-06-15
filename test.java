@@ -9,16 +9,18 @@ public class test {
 //				{79, 65, 60, 70, 77, 68, 58, 75},
 //				{85, 71, 64, 49, 55, 61, 65, 83},
 //				{87, 79, 69, 68, 65, 76, 78, 94}};
-//
-//		Chroma chroma = new Chroma();
-//		chroma.subSample(test);
-//		DCT dct = new DCT();
-//		dct.initMatrix(1);
-//		int[][] arr = dct.forwardDCT(test);
-//		arr = Quantization.quantizeLuma(arr);
-//		int[] zigzag = ZigZag.zigZagMatrix(arr, 8, 8);
-//		String bits = RLE.rleArr(zigzag);
-//		String answer  = HuffMan.encode(bits);
+		int[][] test = {{16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0},
+				{16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0}};
+
+		Chroma chroma = new Chroma();
+		chroma.subSample(test);
+		DCT dct = new DCT();
+		dct.initMatrix(1);
+		int[][] arr = dct.forwardDCT(test);
+		arr = Quantization.quantizeChroma(arr);
+		int[] zigzag = ZigZag.zigZagMatrix(arr, 8, 8);
+		String bits = RLE.rleArr(zigzag);
+		String answer  = HuffMan.encode(bits);
 //		BitOutputStream outputStream = new BitOutputStream("file.compressed");
 //
 //		for(int i = 0; i < answer.length(); i++) {
@@ -26,20 +28,20 @@ public class test {
 //		}
 //
 //		outputStream.close();
+
+		int[][] unzigZag = ZigZag.unZigZag(zigzag);
+		arr = Quantization.decodeQuantizeChroma(unzigZag);
+		arr = dct.inverseDCT(arr);
 //
-//		int[][] unzigZag = ZigZag.unZigZag(zigzag);
-//		arr = Quantization.decodeQuantizeLuma(unzigZag);
-//		arr = dct.inverseDCT(arr);
-////
-////		for(int i = 0; i < zigzag.length; i++) {
-////			System.out.println(zigzag[i]);
-////		}
-//
-//		for(int i = 0; i < arr.length; i++) {
-//			for(int j = 0; j < arr[i].length; j++) {
-//				System.out.print(arr[i][j] + " ");
-//			}
-//			System.out.println();
+//		for(int i = 0; i < zigzag.length; i++) {
+//			System.out.println(zigzag[i]);
 //		}
+
+		for(int i = 0; i < arr.length; i++) {
+			for(int j = 0; j < arr[i].length; j++) {
+				System.out.print(arr[i][j] + " ");
+			}
+			System.out.println();
+		}
 	}
 }

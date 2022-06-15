@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -47,7 +48,7 @@ public class Image {
 		}
 	}
 
-	public void compressImage(String filepath) {
+	public void compressImage(String filepath) throws IOException {
 		String y = "";
 		for(int i = 0; i < blockYArrayList.size(); i++) {
 			for(int j = 0; j < blockYArrayList.get(i).size(); j++) {
@@ -70,19 +71,31 @@ public class Image {
 			cr += "|";
 		}
 
-		String answer = HuffMan.encode(y + ")" + cb + ")" + cr + ")");
+		File output = new File("hello.file");
+		FileWriter fileWriter = new FileWriter(output);
+		String write = y + ">" + cb + ">" + cr + ">";
+
+		fileWriter.write(write);
+		fileWriter.flush();
+		fileWriter.close();
+
+		String answer = HuffMan.encode(y + ">" + cb + ">" + cr + ">");
 
 		BitOutputStream outputStream = new BitOutputStream(filepath);
+		BitInputStream inputStream = new BitInputStream("hello.file");
 
-		for(int i = 0; i < answer.length(); i++) {
-			outputStream.writeBits(1, Integer.valueOf(answer.charAt(i)));
-		}
-
-		outputStream.close();
+		HuffProcessor processor = new HuffProcessor();
+		processor.compress(inputStream, outputStream);
+//
+//		for(int i = 0; i < answer.length(); i++) {
+//			outputStream.writeBits(1, Integer.valueOf(answer.charAt(i)));
+//		}
+//
+//		outputStream.close();
 	}
 
 	public static void main(String[] args) throws IOException {
-		BufferedImage bi = ImageIO.read(new File("Image_created_with_a_mobile_phone.png"));
+		BufferedImage bi = ImageIO.read(new File("based.png"));
 		Image image = new Image(new ProcessImage(bi));
 		image.compressImage("file.compressed");
 	}

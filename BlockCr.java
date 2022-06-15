@@ -5,7 +5,18 @@ public class BlockCr {
 		this.block = block;
 	}
 
-	public BlockCr(String block) {
+	public BlockCr(String b) {
+
+		String block = b;
+
+		if(block.charAt(0) == ' ') {
+			block = block.substring(1);
+		}
+
+		if (block.charAt(block.length() - 1) == ' ') {
+			block = block.substring(0, block.length()-1);
+		}
+
 		int[] arr = RLE.unRLE(block);
 		int[][] zigZag = ZigZag.unZigZag(arr);
 		int[][] quantized = Quantization.decodeQuantizeChroma(zigZag);
